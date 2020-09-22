@@ -18,7 +18,7 @@ export default {
     },
     // 增加，修改，区别有id为修改，没有id为增加
     addOrUpdate(trademark) {
-        if (request.id) {
+        if (trademark.id) {
             return request.put('/admin/product/baseTrademark/update', trademark)
         } else {
             return request.post('/admin/product/baseTrademark/save', trademark)
