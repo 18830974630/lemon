@@ -33,7 +33,7 @@
       @current-change="getTrademarkList"
       style="text-align:center"
       :current-page="page"
-      :page-sizes="[3, 5, 7]"
+      :page-sizes="[10, 8, 7]"
       :page-size="limit"
       layout="prev, pager, next, jumper, ->, sizes, total"
       :total="total"
@@ -77,7 +77,7 @@ export default {
   data() {
     return {
       page: 1,
-      limit: 3,
+      limit: 10,
       trademarkList: [],
       total: 0,
       isShowDialog: false,
