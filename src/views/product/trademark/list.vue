@@ -6,7 +6,12 @@
       <el-table-column prop="tmName" label="品牌名称" width="width"></el-table-column>
       <el-table-column label="品牌LOGO" width="width">
         <template slot-scope="{row,$index}">
-          <img :src="row.logoUrl" alt style="width:100px;height:60px" />
+          <el-image
+            style="width: 100px; height: 60px"
+            :src="row.logoUrl"
+            :previewSrcList="previewSrcList(row)"
+          ></el-image>
+          <!-- <img :src="row.logoUrl" alt style="width:100px;height:60px" /> -->
         </template>
       </el-table-column>
       <el-table-column prop="prop" label="操作" width="width">
@@ -40,14 +45,14 @@
     ></el-pagination>
 
     <!-- 增加表单 -->
-    <el-dialog title="添加品牌" :visible.sync="isShowDialog">
-      <el-form :model="form" style="width:80%">
-        <el-form-item label="活动名称" :label-width="'100px'">
+    <el-dialog :title="form.id?'修改品牌':'添加品牌'" :visible.sync="isShowDialog">
+      <el-form :model="form" style="width:80%" :rules="rules" ref="form">
+        <el-form-item label="活动名称" :label-width="'100px'"  prop="tmName">
           <el-input v-model="form.tmName" autocomplete="off"></el-input>
         </el-form-item>
 
         <!-- 上传 -->
-        <el-form-item label="品牌LOGO" :label-width="'100px'">
+        <el-form-item label="品牌LOGO" :label-width="'100px'" prop="logoUrl">
           <el-upload
             class="avatar-uploader"
             action="/dev-api/admin/product/fileUpload"
@@ -85,6 +90,18 @@ export default {
         tmName: "",
         logoUrl: "",
       },
+      rules: {
+        tmName: [
+          { required: true, message: "请输入内容", trigger: "blur" },
+          {
+            min: 2,
+            max: 10,
+            message: "长度在 2 到 10 个字符",
+            trigger: "change",
+          },
+        ],
+        logoUrl: [{ required: true, message: "请上传图片", trigger: "blur" }],
+      },
     };
   },
   mounted() {
@@ -101,6 +118,7 @@ export default {
       if (result.code === 200) {
         this.trademarkList = result.data.records;
         this.total = result.data.total;
+        // this.srcList = result.data.records.logoUrl;
       }
     },
 
@@ -120,16 +138,23 @@ export default {
     },
 
     // dialog表单确认按钮
-    async dialogFormVisible() {
-      let trademark = this.form;
-      let result = await this.$API.trademark.addOrUpdate(trademark);
-      if (result.code === 200) {
-        this.$message.success(`${trademark.id ? "修改" : "添加"}品牌成功`);
-        this.isShowDialog = false;
-        this.getTrademarkList(trademark.id ? this.page : 1);
-      } else {
-        this.$message.error(`${trademark.id ? "修改" : "添加"}品牌失败`);
-      }
+    dialogFormVisible() {
+      this.$refs.form.validate(async (valid) => {
+        if (valid) {
+          let trademark = this.form;
+          let result = await this.$API.trademark.addOrUpdate(trademark);
+          if (result.code === 200) {
+            this.$message.success(`${trademark.id ? "修改" : "添加"}品牌成功`);
+            this.isShowDialog = false;
+            this.getTrademarkList(trademark.id ? this.page : 1);
+          } else {
+            this.$message.error(`${trademark.id ? "修改" : "添加"}品牌失败`);
+          }
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
     },
 
     // 上传
@@ -175,7 +200,7 @@ export default {
             this.getTrademarkList(
               this.trademarkList.length > 1 ? this.page : this.page - 1
             );
-          }else{
+          } else {
             this.$message.info("删除失败");
           }
         })
@@ -183,6 +208,9 @@ export default {
           this.$message.info("取消删除");
         });
     },
+
+    // 大图预览
+    previewSrcList(row) {},
   },
 };
 </script>
