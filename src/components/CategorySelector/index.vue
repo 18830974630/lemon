@@ -1,5 +1,5 @@
 <template>
-  <el-form inline>
+  <el-form inline :disabled="!isShowList">
     <!-- 
       {
         "id": 1,
@@ -42,7 +42,7 @@ export default {
       disabled: false, // 是否禁用select
     }
   },
-
+  props:['isShowList'],
   mounted () {
     // 异步获取一级分类列表显示
     this.getCategory1List()
