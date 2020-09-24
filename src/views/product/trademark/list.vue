@@ -1,11 +1,27 @@
 <template>
   <div>
-    <el-button type="primary" icon="el-icon-lius" @click="addList">添加</el-button>
-    <el-table :data="trademarkList" style="width:100%;  margin:20px 0" border stripe>
-      <el-table-column type="index" width="80" label="序号" align="center"></el-table-column>
-      <el-table-column prop="tmName" label="品牌名称" width="width"></el-table-column>
+    <el-button type="primary" icon="el-icon-lius" @click="addList"
+      >添加</el-button
+    >
+    <el-table
+      :data="trademarkList"
+      style="width: 100%; margin: 20px 0"
+      border
+      stripe
+    >
+      <el-table-column
+        type="index"
+        width="80"
+        label="序号"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        prop="tmName"
+        label="品牌名称"
+        width="width"
+      ></el-table-column>
       <el-table-column label="品牌LOGO" width="width">
-        <template slot-scope="{row,$index}">
+        <template slot-scope="{ row, $index }">
           <el-image
             style="width: 100px; height: 60px"
             :src="row.logoUrl"
@@ -15,19 +31,21 @@
         </template>
       </el-table-column>
       <el-table-column prop="prop" label="操作" width="width">
-        <template slot-scope="{row,$index}">
+        <template slot-scope="{ row, $index }">
           <el-button
             type="warning"
             icon="el-icon-edit"
             size="small"
             @click="showUpdateDialog(row)"
-          >修改</el-button>
+            >修改</el-button
+          >
           <el-button
             type="danger"
             icon="el-icon-delete"
             size="small"
             @click="deleteTrademark(row)"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -36,7 +54,7 @@
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="getTrademarkList"
-      style="text-align:center"
+      style="text-align: center"
       :current-page="page"
       :page-sizes="[10, 8, 7]"
       :page-size="limit"
@@ -45,9 +63,12 @@
     ></el-pagination>
 
     <!-- 增加表单 -->
-    <el-dialog :title="form.id?'修改品牌':'添加品牌'" :visible.sync="isShowDialog">
-      <el-form :model="form" style="width:80%" :rules="rules" ref="form">
-        <el-form-item label="活动名称" :label-width="'100px'"  prop="tmName">
+    <el-dialog
+      :title="form.id ? '修改品牌' : '添加品牌'"
+      :visible.sync="isShowDialog"
+    >
+      <el-form :model="form" style="width: 80%" :rules="rules" ref="form">
+        <el-form-item label="活动名称" :label-width="'100px'" prop="tmName">
           <el-input v-model="form.tmName" autocomplete="off"></el-input>
         </el-form-item>
 
@@ -62,7 +83,9 @@
           >
             <img v-if="form.logoUrl" :src="form.logoUrl" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+            <div class="el-upload__tip" slot="tip">
+              只能上传jpg/png文件，且不超过500kb
+            </div>
           </el-upload>
         </el-form-item>
       </el-form>
@@ -93,12 +116,13 @@ export default {
       rules: {
         tmName: [
           { required: true, message: "请输入内容", trigger: "blur" },
-          {
-            min: 2,
-            max: 10,
-            message: "长度在 2 到 10 个字符",
-            trigger: "change",
-          },
+          // {
+          //   min: 2,
+          //   max: 10,
+          //   message: "长度在 2 到 10 个字符",
+          //   trigger: "change",
+          // },
+          { validator: this.validatePass, trigger: "change" },
         ],
         logoUrl: [{ required: true, message: "请上传图片", trigger: "blur" }],
       },
@@ -108,6 +132,18 @@ export default {
     this.getTrademarkList();
   },
   methods: {
+    validatePass(rule, value, callback) {
+      if (value.length < 2) {
+        callback(new Error("大于2个字段"));
+      } else if (value.length > 10) {
+        callback(new Error("小于10个字段"));
+      } else if (value.trim() === "") {
+        callback(new Error("不能为空"));
+      } else {
+        callback();
+      }
+    },
+
     // 获取页面动态数据
     async getTrademarkList(page = 1) {
       this.page = page;
