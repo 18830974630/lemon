@@ -40,6 +40,7 @@
                 type="info"
                 size="mini"
                 title="查看SPU所有的SKU"
+                @click="seeAll()"
               ></HintButton>
               <HintButton
                 icon="el-icon-delete"
@@ -98,6 +99,10 @@ export default {
     SpuForm,
   },
   methods: {
+    // 查看SPU所有的SKU
+    seeAll(){
+      this.$message.success("研发中心。。。。")
+    },
     //点击添加sku按钮逻辑
     showAddSkuForm(row) {
       this.isShowSkuForm = true;
@@ -110,6 +115,7 @@ export default {
     showAddSpuForm() {
       this.isShowSpuForm = true;
     },
+    // 三级列表获取数据
     categoryChange({ categoryId, level }) {
       if (level === 1) {
         this.category2Id = "";
@@ -125,6 +131,7 @@ export default {
         this.getSpuList();
       }
     },
+    // 发送请求
     async getSpuList(padee = 1) {
       this.page = padee;
       let { category1Id, category2Id, category3Id } = this;
@@ -138,6 +145,7 @@ export default {
         this.total = result.total;
       }
     },
+    // 分页器
     handleSizeChange(size){
       this.limit = size;
       this.getSpuList()
