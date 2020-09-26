@@ -142,7 +142,7 @@ export default {
       );
       if (result.code === 200) {
         this.spuList = result.data.records;
-        this.total = result.total;
+        this.total = result.data.total;
       }
     },
     // 分页器
