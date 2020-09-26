@@ -42,12 +42,18 @@
                 title="查看SPU所有的SKU"
                 @click="seeAll()"
               ></HintButton>
-              <HintButton
-                icon="el-icon-delete"
-                type="danger"
-                size="mini"
-                title="删除SPU"
-              ></HintButton>
+              <el-popconfirm
+                :title="`确定删除${row.spuName}吗？`"
+                @onConfirm="onConfirm(row)"
+              >
+                <HintButton
+                  icon="el-icon-delete"
+                  type="danger"
+                  size="mini"
+                  title="删除SPU"
+                  slot="reference"
+                ></HintButton>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -65,7 +71,13 @@
       </div>
 
       <!-- <SpuForm v-show="isShowSpuForm" :visible="isShowSpuForm" @update:visible="isShowSpuForm = $event"></SpuForm> -->
-      <SpuForm v-show="isShowSpuForm" :visible.sync="isShowSpuForm"></SpuForm>
+      <SpuForm
+        v-show="isShowSpuForm"
+        ref="spu"
+        :visible.sync="isShowSpuForm"
+        @saveSuccess="saveSuccess"
+        @cancelBack="cancelBack"
+      ></SpuForm>
 
       <SkuForm v-show="isShowSkuForm"></SkuForm>
     </el-card>
@@ -87,7 +99,7 @@ export default {
       category3Id: "",
       spuList: [],
       page: 1,
-      limit: 3,
+      limit: 5,
       total: 0,
 
       isShowSpuForm: false,
@@ -99,9 +111,36 @@ export default {
     SpuForm,
   },
   methods: {
+    // 删除
+    async onConfirm(row) {
+      const result = await this.$API.spu.remove(row.id);
+      if (result.code === 200) {
+        this.$message.success("删除成功");
+        this.getSpuList(this.page);
+      } else {
+        this.$message.error("删除失败");
+      }
+    },
+    //取消回来的
+    cancelBack() {
+      this.spuId = null;
+    },
+    //保存spu返回到列表页的操作
+    saveSuccess() {
+      if (this.spuId) {
+        //修改回来的
+        this.getSpuList(this.page);
+      } else {
+        //添加回来的
+        this.getSpuList();
+      }
+      this.isShowSpuForm = false;
+      this.spuId = null;
+    },
+
     // 查看SPU所有的SKU
-    seeAll(){
-      this.$message.success("研发中心。。。。")
+    seeAll() {
+      this.$message.success("研发中。。。。");
     },
     //点击添加sku按钮逻辑
     showAddSkuForm(row) {
@@ -109,11 +148,15 @@ export default {
     },
     // 点击修改spu按钮逻辑
     showUpdateSpuForm(row) {
+      this.spuId = row.id;
       this.isShowSpuForm = true;
+      this.$refs.spu.initUpdateSpuFormData(row, this.category3Id);
     },
     //点击添加spu按钮逻辑
     showAddSpuForm() {
       this.isShowSpuForm = true;
+      //初始化页面数据请求获取
+      this.$refs.spu.initAddSpuFormData(this.category3Id);
     },
     // 三级列表获取数据
     categoryChange({ categoryId, level }) {
@@ -146,10 +189,10 @@ export default {
       }
     },
     // 分页器
-    handleSizeChange(size){
+    handleSizeChange(size) {
       this.limit = size;
-      this.getSpuList()
-    }
+      this.getSpuList();
+    },
   },
 };
 </script>
