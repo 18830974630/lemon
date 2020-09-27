@@ -58,7 +58,11 @@
         >
         </el-option>
       </el-select>
-      <el-button type="primary" icon="el-icon-plus" @click="addSaleAttr"
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        @click="addSaleAttr"
+        :disabled="!attrIdAttrName"
         >添加销售属性</el-button
       >
       <el-table
@@ -257,6 +261,7 @@ export default {
     showInput(row) {
       // row.isShowInput = true
       this.$set(row, "isShowInput", true);
+      this.$set(row, "saleAttrValueName", "");
       //自动获取焦点
       this.$nextTick(() => {
         this.$refs.saveTagInput.focus();

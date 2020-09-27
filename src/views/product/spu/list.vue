@@ -177,12 +177,8 @@ export default {
     // 发送请求
     async getSpuList(padee = 1) {
       this.page = padee;
-      let { category1Id, category2Id, category3Id } = this;
-      let result = await this.$API.spu.getList(
-        category1Id,
-        category2Id,
-        category3Id
-      );
+      let { page, limit, category3Id } = this;
+      let result = await this.$API.spu.getList(page, limit, category3Id);
       if (result.code === 200) {
         this.spuList = result.data.records;
         this.total = result.data.total;
