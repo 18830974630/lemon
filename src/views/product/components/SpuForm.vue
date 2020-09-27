@@ -146,12 +146,16 @@ export default {
   },
   computed: {
     unUsedSaleAttrList() {
-      return this.baseSaleAttrList.filter((baseSaleAttr) => 
-        this.spuInfo.spuSaleAttrList.every(
+      // return this.baseSaleAttrList.filter((baseSaleAttr) =>
+      //   this.spuInfo.spuSaleAttrList.every(
+      //     (spuSaleAttr) => spuSaleAttr.saleAttrName !== baseSaleAttr.name
+      //   )
+      // );
+      return this.baseSaleAttrList.filter((baseSaleAttr) => {
+        return this.spuInfo.spuSaleAttrList.every(
           (spuSaleAttr) => spuSaleAttr.saleAttrName !== baseSaleAttr.name
-        )
-      );
-      // return this.baseSaleAttrList.filter((baseSaleAttr) => this.spuInfo.spuSaleAttrList.every((spuSaleAttr) => spuSaleAttr.saleAttrName !== baseSaleAttr.name ));
+        );
+      });
     },
   },
   methods: {
