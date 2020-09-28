@@ -123,7 +123,7 @@
                 v-for="item in skuInfo.skuImageList"
                 :key="item.id"
               >
-                <img :src="item.imgUrl" alt=""/>
+                <img :src="item.imgUrl" alt="" />
               </el-carousel-item>
             </el-carousel>
           </el-col>
